@@ -1,0 +1,97 @@
+{
+  "users": [
+    {
+      "id": 1789293075348,
+      "email": "abc@gmail.com",
+      "password": "123456",
+      "role": "user"
+    },
+    {
+      "id": 1789297842184,
+      "email": "admin@edutrack.uz",
+      "password": "admin12345",
+      "role": "user"
+    },
+    {
+      "id": 1789297889605,
+      "email": "111@gmail.com",
+      "password": "123",
+      "role": "user"
+    },
+    {
+      "id": 1789297900333,
+      "email": "1121@gmail.com",
+      "password": "2222",
+      "role": "user"
+    },
+    {
+      "id": 1789297911616,
+      "email": "122121@gmail.com",
+      "password": "223344",
+      "role": "user"
+    },
+    {
+      "id": 1789297962353,
+      "email": "333@gmail.com",
+      "password": "admin12345",
+      "role": "user"
+    },
+    {
+      "id": 1789298757202,
+      "email": "test@gmail.com",
+      "password": "test",
+      "role": "user"
+    },
+    {
+      "id": 1789331087159,
+      "email": "qqqq@gmail.com",
+      "password": "123456",
+      "role": "user"
+    }
+  ],
+  "olympiads": [
+    {
+      "id": 1,
+      "sectionId": "languages",
+      "title": "0 dan Ingliz tili kurslari",
+      "category": "Ingliz tili",
+      "tags": "ingliztili, 0dan",
+      "deadline": "15-Noyabr",
+      "youtube_urls": [
+        "https://youtu.be/d-fvgkbTED0?si=FcVTVNF6uTYDlWcC",
+        "https://youtu.be/n-uTwzzVnsg?si=2oPmm94mCFpVsQXA"
+      ],
+      "extra_resources": "Manba: \"Ibrat farzandlari\" YoutTube kanali",
+      "pdf_url": "/uploads/1789299400067-kimyo_8_rus.pdf",
+      "description": "9-11 sinf o'quvchilari uchun Ingliz tili bilimlarini sinovdan o'tkazuvchi tanlov"
+    },
+    {
+      "id": 1789318131905,
+      "sectionId": "olympiads",
+      "title": "Tumanlar aro fan oilimpiadalari",
+      "category": "Informatika",
+      "tags": "9-sinf",
+      "deadline": "1-oy",
+      "youtube_urls": [
+        "https://youtu.be/r7BpniYxcPg?si=VMwoGESdQFLSB4TW"
+      ],
+      "extra_resources": "\"Maktabgacha va maktab ta'lim vazirligi\" YouTube kanali",
+      "pdf_url": "",
+      "description": "Sifatli kurslar"
+    }
+  ],
+  "sections": [
+    {
+      "id": "olympiads",
+      "name": "Olimpiadalar"
+    },
+    {
+      "id": "languages",
+      "name": "Til o'rganish"
+    }
+  ],
+  "admin": {
+    "email": "jocer5225@gmail.com",
+    "password": "admin123456"
+  }
+}

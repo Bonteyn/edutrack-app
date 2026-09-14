@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack — Ta'lim Portali</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        
+        /* Тёплый размытый градиентный фон */
+        body { 
+            background: #f4efe9;
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(255, 200, 150, 0.55) 0px, transparent 50%),
+                radial-gradient(at 90% 20%, rgba(220, 210, 255, 0.55) 0px, transparent 50%),
+                radial-gradient(at 50% 80%, rgba(255, 220, 180, 0.5) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #1a1a1a; 
+            min-height: 100vh;
+        }
+
+        /* Glassmorphic Header */
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 18px 5%; 
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo { font-size: 26px; font-weight: 800; color: #111111; letter-spacing: -0.5px; }
+        
+        .hero { text-align: center; padding: 60px 20px 20px 20px; }
+        .hero h1 { font-size: 38px; font-weight: 800; color: #111827; letter-spacing: -0.8px; margin-bottom: 10px; }
+        .hero p { color: #4b5563; font-size: 16px; font-weight: 500; }
+
+        .container { max-width: 1080px; margin: 0 auto; padding: 30px 20px; }
+        
+        /* Вкладки разделов */
+        .sections-tabs { display: flex; justify-content: center; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; }
+        .tab-wrapper { 
+            display: inline-flex; 
+            align-items: center; 
+            background: rgba(255, 255, 255, 0.3); 
+            border: 1px solid rgba(255, 255, 255, 0.6); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 30px; 
+            padding: 4px 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+        .tab-wrapper.active { 
+            background: #111827; 
+            border-color: #111827; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        .tab-btn { background: transparent; border: none; color: #374151; padding: 8px 16px; cursor: pointer; font-weight: 600; font-size: 14px; }
+        .tab-wrapper.active .tab-btn { color: #ffffff; }
+        
+        .btn-del-sec { background: transparent; border: none; color: #ef4444; font-size: 12px; cursor: pointer; padding: 2px 6px; border-radius: 50%; }
+        .btn-del-sec:hover { background: rgba(239, 68, 68, 0.15); }
+
+        /* Поиск */
+        .search-box { margin-bottom: 35px; text-align: center; }
+        .search-input { 
+            width: 100%; 
+            max-width: 520px; 
+            padding: 14px 22px; 
+            border-radius: 30px; 
+            border: 1px solid rgba(255, 255, 255, 0.7); 
+            background: rgba(255, 255, 255, 0.35); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            color: #111827; 
+            font-size: 15px; 
+            outline: none; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+        }
+        .search-input:focus { 
+            background: rgba(255, 255, 255, 0.6); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06); 
+            border-color: rgba(255,255,255,0.9); 
+        }
+
+        /* Прозрачные Карточки (Frosted Glass) */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+        .card { 
+            background: rgba(255, 255, 255, 0.22); 
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 26px; 
+            border-radius: 24px; 
+            border: 1px solid rgba(255, 255, 255, 0.5); 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.04);
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card:hover { 
+            background: rgba(255, 255, 255, 0.35);
+            border-color: rgba(255, 255, 255, 0.8);
+            transform: translateY(-6px); 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08); 
+        }
+
+        /* Теги */
+        .tag { background: rgba(0, 0, 0, 0.06); color: #1f2937; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-right: 6px; display: inline-block; }
+        .tag-sub { background: rgba(255,255,255,0.5); color: #374151; border: 1px solid rgba(255,255,255,0.6); cursor: pointer; }
+        .tag-sub:hover { background: #111827; color: white; }
+
+        /* Кнопки */
+        button, .btn-link { 
+            cursor: pointer; 
+            border: none; 
+            border-radius: 20px; 
+            font-weight: 600; 
+            padding: 11px 18px; 
+            text-decoration: none; 
+            text-align: center; 
+            font-size: 13px; 
+            transition: all 0.2s ease;
+        }
+        .btn-main { background: #111827; color: white; box-shadow: 0 4px 12px rgba(17,24,39,0.15); }
+        .btn-main:hover { background: #1f2937; transform: scale(1.01); }
+        
+        .btn-sec { background: rgba(255, 255, 255, 0.4); color: #374151; border: 1px solid rgba(255, 255, 255, 0.6); backdrop-filter: blur(10px); }
+        .btn-sec:hover { background: rgba(255, 255, 255, 0.7); }
+
+        .btn-admin { background: #10b981; color: white; margin-right: 8px; }
+        .btn-edit { background: #f59e0b; color: white; margin-right: 5px; }
+        .btn-del { background: #ef4444; color: white; }
+        .btn-pdf { background: #ef4444; color: white; margin-top: 8px; display: block; }
+        
+        .user-stat { background: rgba(255, 255, 255, 0.4); color: #111827; border: 1px solid rgba(255,255,255,0.6); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+
+        /* Модальные окна */
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.25); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { 
+            background: rgba(255, 255, 255, 0.6); 
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            padding: 30px; 
+            border-radius: 28px; 
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+            width: 90%; 
+            max-width: 520px; 
+            position: relative; 
+            max-height: 90vh; 
+            overflow-y: auto; 
+            color: #111827;
+        }
+        
+        .input-field { 
+            width: 100%; 
+            padding: 12px 16px; 
+            margin-top: 10px; 
+            border-radius: 14px; 
+            border: 1px solid rgba(255,255,255,0.6); 
+            background: rgba(255,255,255,0.5); 
+            color: #111827; 
+            font-size: 14px;
+            outline: none;
+        }
+        .input-field:focus { background: rgba(255,255,255,0.8); border-color: #111827; }
+
+        .close { position: absolute; right: 20px; top: 20px; font-size: 22px; cursor: pointer; color: #6b7280; }
+        
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 16px; margin-top: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+        .video-container iframe { position: absolute; top:0; left:0; width:100%; height:100%; border:0; }
+        
+        .extra-box { background: rgba(255, 255, 255, 0.4); padding: 14px; border-radius: 14px; margin-top: 12px; font-size: 13px; color: #374151; border-left: 4px solid #111827; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">EduTrack</div>
+        <div id="auth-buttons">
+            <button onclick="openAuthModal('login')" class="btn-main" style="margin-right:8px;">Kirish</button>
+            <button onclick="openAuthModal('register')" class="btn-sec">Ro'yxatdan o'tish</button>
+        </div>
+        <div id="user-profile" style="display:none; align-items:center; flex-wrap: wrap; gap: 8px;">
+            <span id="user-count-badge" class="user-stat" style="display:none;">👥 Foydalanuvchilar: 0 ta</span>
+            <span id="user-email-display" style="font-size:14px; font-weight: 600; color:#374151;"></span>
+            <button id="admin-btn" onclick="openAdminModal()" style="display:none;" class="btn-admin">+ Yangi E'lon</button>
+            <button id="admin-sec-btn" onclick="openSectionModal()" style="display:none;" class="btn-sec">📂 + Bo'lim</button>
+            <button id="admin-cred-btn" onclick="openCredModal()" style="display:none;" class="btn-sec">🔑 Sozlamalar</button>
+            <button onclick="logout()" class="btn-sec">Chiqish</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Olimpiadalar va Til O'rganish Portali</h1>
+        <p>Kelajak imkoniyatlari va bepul tayyorgarlik manbalari</p>
+    </section>
+
+    <section class="container">
+        <div id="sections-tabs" class="sections-tabs"></div>
+
+        <div class="search-box">
+            <input type="text" id="search-input" oninput="filterOlympiads()" placeholder="🔍 Qidiruv (Masalan: Ingliz tili yoki #9-sinf)..." class="search-input">
+        </div>
+
+        <div id="cards-grid" class="grid"></div>
+    </section>
+
+    <!-- Modal Login / Register -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('authModal')">&times;</span>
+            <h3 id="auth-title" style="font-weight: 800;">Kirish</h3>
+            <form onsubmit="handleAuthSubmit(event)">
+                <input type="email" id="auth-email" placeholder="E-mail" required class="input-field">
+                <input type="password" id="auth-password" placeholder="Parol" required class="input-field">
+                <button type="submit" id="auth-submit-btn" class="btn-main" style="width:100%; margin-top:18px;">Kirish</button>
+            </form>
+            <div style="margin-top:15px; text-align:center; font-size:13px; color:#6b7280;">
+                <span id="auth-toggle-text">Hisobingiz yo'qmi?</span> 
+                <a href="#" id="auth-toggle-link" onclick="toggleAuthMode(event)" style="color:#111827; text-decoration:none; font-weight:700;">Ro'yxatdan o'ting</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Change Admin Credentials -->
+    <div id="credModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('credModal')">&times;</span>
+            <h3 style="font-weight: 800;">🔑 Admin Login va Parolini O'zgartirish</h3>
+            <form onsubmit="handleUpdateCredentials(event)">
+                <label style="display:block; margin-top:12px; font-size:12px; font-weight: 600; color:#6b7280;">Yangi Admin E-mail:</label>
+                <input type="email" id="cred-new-email" placeholder="Yangi E-mail" required class="input-field">
+                
+                <label style="display:block; margin-top:12px; font-size:12px; font-weight: 600; color:#6b7280;">Yangi Parol:</label>
+                <input type="password" id="cred-new-pass" placeholder="Yangi Parol" required class="input-field">
+                
+                <button type="submit" class="btn-main" style="width:100%; margin-top:20px;">Saqlash</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Lock -->
+    <div id="lockModal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close" onclick="closeModal('lockModal')">&times;</span>
+            <div style="font-size:48px; margin-bottom:10px;">🔒</div>
+            <h3 style="margin-bottom:10px; font-weight: 800;">Bepul tayyorlanish uchun tizimga kiring</h3>
+            <p style="color:#6b7280; font-size:14px; margin-bottom:20px;">Darslarni ko'rish va PDF materiallarni yuklab olish uchun akkauntga kirish lozim.</p>
+            <button onclick="closeModal('lockModal'); openAuthModal('login');" class="btn-main" style="width:100%; margin-bottom:10px;">Kirish</button>
+            <button onclick="closeModal('lockModal'); openAuthModal('register');" class="btn-sec" style="width:100%;">Ro'yxatdan o'tish</button>
+        </div>
+    </div>
+
+    <!-- Modal Add Section -->
+    <div id="sectionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('sectionModal')">&times;</span>
+            <h3 style="font-weight: 800;">📂 Yangi Bo'lim Yaratish</h3>
+            <form onsubmit="handleAddSection(event)">
+                <input type="text" id="sec-name" placeholder="Bo'lim nomi (Masalan: IT va Dasturlash)" required class="input-field">
+                <button type="submit" class="btn-main" style="width:100%; margin-top:18px;">Yaratish</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Admin -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('adminModal')">&times;</span>
+            <h3 id="admin-form-title" style="font-weight: 800;">⚙️ E'lon Qo'shish</h3>
+            <form onsubmit="handleSaveOlympiad(event)">
+                <input type="hidden" id="adm-id">
+                
+                <label style="display:block; margin-top:12px; font-size:12px; font-weight: 600; color:#6b7280;">Bo'limni tanlang:</label>
+                <select id="adm-section" class="input-field" required></select>
+
+                <input type="text" id="adm-title" placeholder="Mavzu / Kurs / Olimpiada nomi" required class="input-field">
+                <input type="text" id="adm-cat" placeholder="Kategoriya (masalan: Nemis tili / Matematika)" required class="input-field">
+                <input type="text" id="adm-tags" placeholder="Teglar (masalan: B2, Grammatika, 9-sinf)" class="input-field">
+                <input type="text" id="adm-deadline" placeholder="Muddat / Boshlanish vaqti" required class="input-field">
+                <textarea id="adm-yt" placeholder="YouTube Video havolalari (har birini YANGI QATORDAN yozing)" class="input-field" rows="3" required></textarea>
+                
+                <label style="display:block; margin-top:12px; font-size:12px; font-weight: 600; color:#6b7280;">📄 PDF Material yuklash:</label>
+                <input type="file" id="adm-pdf-file" accept="application/pdf" class="input-field">
+                <input type="hidden" id="adm-pdf-url">
+
+                <textarea id="adm-extra" placeholder="Qo'shimcha manbalar..." class="input-field" rows="2"></textarea>
+                <textarea id="adm-desc" placeholder="Tavsif..." class="input-field" rows="2"></textarea>
+                
+                <button type="submit" class="btn-main" style="width:100%; margin-top:20px;">Saqlash</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Player -->
+    <div id="playerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePlayerModal()">&times;</span>
+            <h3 id="player-title" style="font-weight: 800;">Tayyorgarlik Darslari</h3>
+            
+            <div id="video-select-box" style="margin-top:10px; display:none;">
+                <label style="font-size:12px; font-weight: 600; color:#6b7280;">Darsni tanlang:</label>
+                <select id="video-select" class="input-field" onchange="switchVideo()"></select>
+            </div>
+
+            <div class="video-container">
+                <iframe id="youtubeIframe" src="" allowfullscreen></iframe>
+            </div>
+            
+            <div id="player-extra-box" class="extra-box" style="margin-top: 15px;"></div>
+            <a id="player-pdf-btn" href="" download class="btn-link btn-pdf" style="width: 100%; display: none; margin-top: 12px;">📄 PDF Materialni Yuklab Olish</a>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let currentMode = 'login';
+        let allData = [];
+        let sections = [];
+        let activeSectionId = 'olympiads';
+        let activeVideos = [];
+
+        window.onload = () => { updateUI(); loadData(); };
+
+        async function updateUI() {
+            if (currentUser) {
+                document.getElementById('auth-buttons').style.display = 'none';
+                document.getElementById('user-profile').style.display = 'flex';
+                document.getElementById('user-email-display').innerText = currentUser.email;
+
+                if (currentUser.role === 'admin') {
+                    document.getElementById('admin-btn').style.display = 'inline-block';
+                    document.getElementById('admin-sec-btn').style.display = 'inline-block';
+                    document.getElementById('admin-cred-btn').style.display = 'inline-block';
+                    const res = await fetch('/api/admin/stats');
+                    const stats = await res.json();
+                    const badge = document.getElementById('user-count-badge');
+                    badge.innerText = `👥 Foydalanuvchilar: ${stats.totalUsers} ta`;
+                    badge.style.display = 'inline-block';
+                }
+            } else {
+                document.getElementById('auth-buttons').style.display = 'flex';
+                document.getElementById('user-profile').style.display = 'none';
+            }
+        }
+
+        async function loadData() {
+            const res = await fetch('/api/data');
+            const data = await res.json();
+            allData = data.olympiads || [];
+            sections = data.sections || [];
+            
+            if (sections.length > 0 && !sections.find(s => s.id === activeSectionId)) {
+                activeSectionId = sections[0].id;
+            }
+
+            renderTabs();
+            filterOlympiads();
+        }
+
+        function renderTabs() {
+            const tabsBox = document.getElementById('sections-tabs');
+            const isAdmin = currentUser && currentUser.role === 'admin';
+
+            tabsBox.innerHTML = sections.map(s => `
+                <div class="tab-wrapper ${s.id === activeSectionId ? 'active' : ''}">
+                    <button class="tab-btn" onclick="switchSection('${s.id}')">${s.name}</button>
+                    ${isAdmin && sections.length > 1 ? `<button class="btn-del-sec" onclick="deleteSection('${s.id}', '${s.name}')" title="Bo'limni o'chirish">❌</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function switchSection(secId) {
+            activeSectionId = secId;
+            renderTabs();
+            filterOlympiads();
+        }
+
+        async function deleteSection(id, name) {
+            if (!confirm(`"${name}" bo'limini o'chirmoqchimisiz?`)) return;
+            const res = await fetch('/api/admin/delete-section', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, adminEmail: currentUser.email })
+            });
+            const data = await res.json();
+            if (data.sections) {
+                sections = data.sections;
+                activeSectionId = sections[0]?.id || 'olympiads';
+                loadData();
+            }
+        }
+
+        function openCredModal() {
+            document.getElementById('cred-new-email').value = currentUser.email;
+            document.getElementById('cred-new-pass').value = '';
+            document.getElementById('credModal').style.display = 'flex';
+        }
+
+        async function handleUpdateCredentials(e) {
+            e.preventDefault();
+            const newEmail = document.getElementById('cred-new-email').value;
+            const newPassword = document.getElementById('cred-new-pass').value;
+
+            const res = await fetch('/api/admin/update-credentials', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    currentEmail: currentUser.email,
+                    newEmail,
+                    newPassword
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.error) {
+                alert(data.error);
+            } else {
+                alert("Ma'lumotlar muvaffaqiyatli o'zgartirildi! Qayta kirishingiz lozim.");
+                currentUser.email = data.newEmail;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                closeModal('credModal');
+                logout();
+            }
+        }
+
+        function filterOlympiads() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+
+            let filtered = allData.filter(item => (item.sectionId || 'olympiads') === activeSectionId);
+
+            if (query) {
+                filtered = filtered.filter(item => {
+                    if (query.startsWith('#')) {
+                        const tagQuery = query.replace('#', '').trim();
+                        return item.tags && item.tags.toLowerCase().includes(tagQuery);
+                    } else {
+                        return item.title.toLowerCase().includes(query) || 
+                               item.category.toLowerCase().includes(query) ||
+                               (item.tags && item.tags.toLowerCase().includes(query));
+                    }
+                });
+            }
+
+            renderCards(filtered);
+        }
+
+        function renderCards(data) {
+            const grid = document.getElementById('cards-grid');
+            grid.innerHTML = '';
+
+            if (data.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #6b7280;">Ushbu bo'limda e'lonlar topilmadi...</p>`;
+                return;
+            }
+
+            data.forEach((item) => {
+                const index = allData.findIndex(o => o.id === item.id);
+                const tagsHTML = item.tags ? item.tags.split(',').map(t => `<span class="tag tag-sub" onclick="searchTag('${t.trim()}')">#${t.trim()}</span>`).join('') : '';
+                const isAdmin = currentUser && currentUser.role === 'admin';
+
+                grid.innerHTML += `
+                    <div class="card">
+                        <div>
+                            <div>
+                                <span class="tag">${item.category}</span>
+                                ${tagsHTML}
+                            </div>
+                            <h3 style="margin:12px 0 8px 0; font-weight:800; font-size:20px; color:#111827;">${item.title}</h3>
+                            <p style="color:#4b5563; font-size:14px; line-height:1.5;">${item.description}</p>
+                            <p style="color:#d97706; margin:12px 0; font-size:13px; font-weight:600;">⏰ Muddat: ${item.deadline}</p>
+                        </div>
+                        <div style="margin-top:15px;">
+                            <button class="btn-main" style="width:100%;" onclick="handleWatchClick(${index})">▶ Tayyorgarlik ko'rish (${item.youtube_urls ? item.youtube_urls.length : 0} ta video)</button>
+                            ${item.pdf_url ? `<button onclick="handlePdfDownload('${item.pdf_url}')" class="btn-link btn-pdf" style="width:100%; margin-top:8px;">📄 PDF Materialni Yuklash</button>` : ''}
+                            
+                            ${isAdmin ? `
+                                <div style="margin-top:10px; display:flex;">
+                                    <button class="btn-edit" style="flex:1;" onclick="editOlympiad(${index})">✏️ Tahrirlash</button>
+                                    <button class="btn-del" style="flex:1;" onclick="deleteOlympiad(${item.id})">🗑️ O'chirish</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function searchTag(tagName) {
+            document.getElementById('search-input').value = `#${tagName}`;
+            filterOlympiads();
+        }
+
+        function handleWatchClick(index) {
+            if (!currentUser) {
+                document.getElementById('lockModal').style.display = 'flex';
+            } else {
+                openPlayer(index);
+            }
+        }
+
+        function handlePdfDownload(url) {
+            if (!currentUser) {
+                document.getElementById('lockModal').style.display = 'flex';
+            } else {
+                window.open(url, '_blank');
+            }
+        }
+
+        function formatYoutubeUrl(url) {
+            if (!url) return '';
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? `https://www.youtube-nocookie.com/embed/${match[2]}` : url;
+        }
+
+        function openPlayer(index) {
+            const item = allData[index];
+            document.getElementById('player-title').innerText = item.title;
+            activeVideos = item.youtube_urls || [];
+            
+            const selectBox = document.getElementById('video-select-box');
+            const select = document.getElementById('video-select');
+            
+            if (activeVideos.length > 1) {
+                select.innerHTML = activeVideos.map((v, i) => `<option value="${i}">${i+1}-Dars / Video</option>`).join('');
+                selectBox.style.display = 'block';
+            } else {
+                selectBox.style.display = 'none';
+            }
+
+            if (activeVideos.length > 0) {
+                document.getElementById('youtubeIframe').src = formatYoutubeUrl(activeVideos[0]);
+            }
+
+            const extraBox = document.getElementById('player-extra-box');
+            extraBox.style.display = item.extra_resources ? 'block' : 'none';
+            extraBox.innerHTML = `<b>📌 Qo'shimcha manbalar:</b><br>${item.extra_resources || ''}`;
+
+            const pdfBtn = document.getElementById('player-pdf-btn');
+            if (item.pdf_url) {
+                pdfBtn.href = item.pdf_url;
+                pdfBtn.style.display = 'block';
+            } else {
+                pdfBtn.style.display = 'none';
+            }
+
+            document.getElementById('playerModal').style.display = 'flex';
+        }
+
+        function switchVideo() {
+            const idx = document.getElementById('video-select').value;
+            document.getElementById('youtubeIframe').src = formatYoutubeUrl(activeVideos[idx]);
+        }
+
+        function closePlayerModal() {
+            document.getElementById('playerModal').style.display = 'none';
+            document.getElementById('youtubeIframe').src = '';
+        }
+
+        function openSectionModal() {
+            document.getElementById('sec-name').value = '';
+            document.getElementById('sectionModal').style.display = 'flex';
+        }
+
+        async function handleAddSection(e) {
+            e.preventDefault();
+            const name = document.getElementById('sec-name').value;
+            const res = await fetch('/api/admin/add-section', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, adminEmail: currentUser.email })
+            });
+            const data = await res.json();
+            if (data.sections) {
+                sections = data.sections;
+                renderTabs();
+                closeModal('sectionModal');
+            }
+        }
+
+        function openAdminModal() {
+            document.getElementById('admin-form-title').innerText = "⚙️ Yangi E'lon Qo'shish";
+            document.getElementById('adm-id').value = '';
+            
+            const select = document.getElementById('adm-section');
+            select.innerHTML = sections.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            select.value = activeSectionId;
+
+            document.getElementById('adm-title').value = '';
+            document.getElementById('adm-cat').value = '';
+            document.getElementById('adm-tags').value = '';
+            document.getElementById('adm-deadline').value = '';
+            document.getElementById('adm-yt').value = '';
+            document.getElementById('adm-pdf-url').value = '';
+            document.getElementById('adm-extra').value = '';
+            document.getElementById('adm-desc').value = '';
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+
+        function editOlympiad(index) {
+            const item = allData[index];
+            document.getElementById('admin-form-title').innerText = "✏️ E'lonni Tahrirlash";
+            document.getElementById('adm-id').value = item.id;
+            
+            const select = document.getElementById('adm-section');
+            select.innerHTML = sections.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            select.value = item.sectionId || 'olympiads';
+
+            document.getElementById('adm-title').value = item.title;
+            document.getElementById('adm-cat').value = item.category;
+            document.getElementById('adm-tags').value = item.tags || '';
+            document.getElementById('adm-deadline').value = item.deadline;
+            document.getElementById('adm-yt').value = (item.youtube_urls || []).join('\n');
+            document.getElementById('adm-pdf-url').value = item.pdf_url || '';
+            document.getElementById('adm-extra').value = item.extra_resources || '';
+            document.getElementById('adm-desc').value = item.description || '';
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+
+        async function deleteOlympiad(id) {
+            if (!confirm("Haqiqatan ham ushbu e'lonni o'chirmoqchimisiz?")) return;
+            await fetch('/api/admin/delete-olympiad', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, adminEmail: currentUser.email })
+            });
+            loadData();
+        }
+
+        async function handleSaveOlympiad(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('adm-pdf-file');
+            let pdfUrl = document.getElementById('adm-pdf-url').value;
+
+            if (fileInput.files.length > 0) {
+                const formData = new FormData();
+                formData.append('pdf', fileInput.files[0]);
+                const uploadRes = await fetch('/api/admin/upload-pdf', { method: 'POST', body: formData });
+                const uploadData = await uploadRes.json();
+                if (uploadData.pdf_url) pdfUrl = uploadData.pdf_url;
+            }
+
+            const ytLinks = document.getElementById('adm-yt').value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+            const body = {
+                id: document.getElementById('adm-id').value,
+                sectionId: document.getElementById('adm-section').value,
+                adminEmail: currentUser.email,
+                title: document.getElementById('adm-title').value,
+                category: document.getElementById('adm-cat').value,
+                tags: document.getElementById('adm-tags').value,
+                deadline: document.getElementById('adm-deadline').value,
+                youtube_urls: ytLinks,
+                pdf_url: pdfUrl,
+                extra_resources: document.getElementById('adm-extra').value,
+                description: document.getElementById('adm-desc').value
+            };
+
+            await fetch('/api/admin/save-olympiad', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            closeModal('adminModal');
+            loadData();
+        }
+
+        function openAuthModal(mode) {
+            currentMode = mode;
+            updateAuthModalUI();
+            document.getElementById('authModal').style.display = 'flex';
+        }
+
+        function toggleAuthMode(e) {
+            e.preventDefault();
+            currentMode = currentMode === 'login' ? 'register' : 'login';
+            updateAuthModalUI();
+        }
+
+        function updateAuthModalUI() {
+            const isReg = currentMode === 'register';
+            document.getElementById('auth-title').innerText = isReg ? "Ro'yxatdan o'tish" : "Kirish";
+            document.getElementById('auth-submit-btn').innerText = isReg ? "Ro'yxatdan o'tish" : "Kirish";
+            document.getElementById('auth-toggle-text').innerText = isReg ? "Akkauntingiz bormi?" : "Hisobingiz yo'qmi?";
+            document.getElementById('auth-toggle-link').innerText = isReg ? "Kirish" : "Ro'yxatdan o'ting";
+        }
+
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const endpoint = currentMode === 'register' ? '/api/register' : '/api/login';
+
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (data.error) {
+                alert(data.error);
+            } else {
+                currentUser = data.user;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                closeModal('authModal');
+                updateUI();
+                loadData();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
